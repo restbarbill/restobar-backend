@@ -27,7 +27,7 @@ import { KdsModule } from './modules/kds/kds.module';
       useFactory: (config: ConfigService) => {
         const isSsl = config.get<string>('DB_SSL') === 'true';
         const isProd = config.get<string>('NODE_ENV') === 'production';
-        const sync = config.get<string>('DB_SYNCHRONIZE') === 'true' && !isProd;
+        const sync = config.get<string>('DB_SYNCHRONIZE') === 'true';
 
         return {
           type: 'postgres',
