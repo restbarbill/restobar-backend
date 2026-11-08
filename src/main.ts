@@ -11,10 +11,22 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  // Habilitar CORS flexible para localhost, Vercel preview y dominios de produccion/dev
   app.enableCors({
-    origin: process.env.FRONTEND_URL
-      ? process.env.FRONTEND_URL.split(',')
-      : ['http://localhost:5173', 'http://localhost:3000'],
+    origin: (origin, callback) => {
+      // Permitir peticiones sin origen (como Postman o curl) o cualquier subdominio de vercel y kairocali
+      if (
+        !origin ||
+        origin.includes('localhost') ||
+        origin.includes('vercel.app') ||
+        origin.includes('kairocali.com') ||
+        origin.includes('kairocall.com')
+      ) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Permisivo para evitar bloqueos durante configuracion
+      }
+    },
     credentials: true,
   });
 
@@ -44,8 +56,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  logger.log(`🚀 Backend RestoBar corriendo en: http://localhost:${port}/api/v1`);
-  logger.log(`📚 Documentación Swagger en:     http://localhost:${port}/api/docs`);
+  logger.log(`🚀 Backend RestoBar corriendo en puerto: ${port}`);
 }
 
 void bootstrap();
